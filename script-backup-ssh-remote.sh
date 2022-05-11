@@ -1,12 +1,12 @@
 #!/bin/bash
 # Ruta en la que guardar los backups
 
-backup_dir="/datos/postgresql/respaldos/"
+backup_dir="/tmp/respaldos"
 fecha_dir=$(date +%b-%Y/)
 fecha=$(date +%d-%m-%Y)
-archivo="localizagps-"
+archivo1="database1-"
 extension=".backup"
-agrosuper="agrosuper-"
+archivo2="database2-"
 carpeta_date=$backup_dir$fecha_dir
 
 
@@ -15,28 +15,32 @@ then
     mkdir -p "$carpeta_date"
 fi
 
-archivo_localiza=$carpeta_date$archivo$fecha$extension
-archivo_agrosuper=$carpeta_date$agrosuper$fecha$extension
+archivo_db1=$carpeta_date$archivo2$fecha$extension
+archivo_db2=$carpeta_date$archivo1$fecha$extension
 
 
 
 
-export PGPASSWORD="8KaL8bxJkpGg"
+
+export PGPASSWORD="YOUR_PASSWORD_DATABASE"
 
 
 
-pg_dump -h localhost -U postgres -F c -b -v -f $archivo_agrosuper agrosuper
+pg_dump -h localhost -U postgres -F c -b -v -f $archivo_db1 database1
 
-if [ -f "$archivo_agrosuper" ]; then
-    echo "Subject: Exito: Respaldo Agrosuper \n\n Respaldo realizado correctamente." | /usr/sbin/sendmail -vf alertas@ftrack.cl pbalboa@ftrack.cl
+
+#Preconfigura tu sendmail para enviar una alarma a traves de un correo
+
+if [ -f "$archivo_db1" ]; then
+    echo "Subject: Exito: Respaldo Database1 \n\n Respaldo realizado correctamente." | /usr/sbin/sendmail -vf alertas@domain.cl tumail@domain.cl
 else
-    echo 'Subject: Fallido: Respaldo Agrosuper \n\n No se hizo el respaldo, Revisar Urgente.' | /usr/sbin/sendmail -vf alertas@ftrack.cl pbalboa@ftrack.cl
+    echo 'Subject: Fallido: Respaldo Database1 \n\n No se hizo el respaldo, Revisar Urgente.' | /usr/sbin/sendmail -vf alertas@domain.cl tumail@domain.cl
 fi
 
-pg_dump -h localhost -U postgres -F c -b -v -f $archivo_localiza localizagps
+pg_dump -h localhost -U postgres -F c -b -v -f $archivo_db2 database2
 
-if [ -f "$archivo_localiza" ]; then
-    echo "Subject: Exito: Respaldo Localiza \n\n Respaldo realizado correctamente." | /usr/sbin/sendmail -vf alertas@ftrack.cl pbalboa@ftrack.cl
+if [ -f "$archivo_db2" ]; then
+    echo "Subject: Exito: Respaldo Database2 \n\n Respaldo realizado correctamente." | /usr/sbin/sendmail -vf alertas@domain.cl tumail@domain.cl
 else
-    echo 'Subject: Fallido: Respaldo Localiza \n\n No se hizo el respaldo, Revisar Urgente.' | /usr/sbin/sendmail -vf alertas@ftrack.cl pbalboa@ftrack.cl
+    echo 'Subject: Fallido: Respaldo Database2 \n\n No se hizo el respaldo, Revisar Urgente.' | /usr/sbin/sendmail -vf alertas@domain.cl tumail@domain.cl
 fi
