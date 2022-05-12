@@ -10,7 +10,7 @@ fecha=$(date +%d-%m-%Y)
 extension=".backup"
 #Set del inicio del nombre del archivo de los backups
 archivo1="database1-"
-rchivo2="database2-"
+archivo2="database2-"
 
 # Creación de la carpeta donde se guardarán los respaldos segun el Mes
 carpeta_date=$backup_dir$fecha_dir
