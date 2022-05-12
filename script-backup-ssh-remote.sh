@@ -1,8 +1,9 @@
 #!/bin/bash
+# https://github.com/patobalboa
 
 
 # Set de la ruta en la que guardar los backups
-backup_dir="/tmp/respaldos"
+backup_dir="/tmp/respaldos/"
 # Set fecha para la creación del directorio con el Mes y el Año
 fecha_dir=$(date +%b-%Y/)
 # Set fecha de la creación del archivo .backup
