@@ -29,7 +29,7 @@ export PGPASSWORD="YOUR_PASSWORD_DATABASE"
 pg_dump -h localhost -U postgres -F c -b -v -f $archivo_db1 database1
 
 
-#Preconfigura tu sendmail para enviar una alarma a traves de un correo
+#Preconfigura tu sendmail para enviar una alarma a traves de un correo.
 
 if [ -f "$archivo_db1" ]; then
     echo "Subject: Exito: Respaldo Database1 \n\n Respaldo realizado correctamente." | /usr/sbin/sendmail -vf alertas@domain.cl tumail@domain.cl
