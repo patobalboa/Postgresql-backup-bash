@@ -25,6 +25,8 @@ $ ./postgresql-backup-bash.sh
 ```bash 
 $ crontab -e
 
+#Explain: Cron job to run script every day at 00:00
+
 0 0 * * * /path/to/postgresql-backup-bash.sh
 ```
 
