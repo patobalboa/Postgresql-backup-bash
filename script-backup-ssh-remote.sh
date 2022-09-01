@@ -22,6 +22,7 @@ SENDMAIL_SUBJECT = "Backup from remote server"
 SENDMAIL_BODY_ERROR = "Error while executing backup script"
 SENDMAIL_BODY_SUCCESS = "Backup from remote server successful"
 
+
 # - POSTGRESQL
 export PGPASSWORD="YOUR_PASSWORD_DATABASE"
 DATABASE_NAME="DATABASE_NAME"
@@ -44,17 +45,18 @@ CRONTAB_COMMAND="0 0 * * * /path/to/script-backup-ssh-remote.sh"
 RSYNC_OPTIONS="-avz --delete"
 
 # - MAIL
-MAIL_OPTIONS="-f $SENDMAIL_FROM -t $SENDMAIL_TO -s $SENDMAIL_SUBJECT"
+MAIL_OPTIONS="-vf $SENDMAIL_FROM $SENDMAIL_TO"
 
 # - LOG
 LOG_FILE="/path/to/log/file"
 
 # Functions
+
 function send_mail {
     if [ $1 -eq 0 ]; then
-        echo "$SENDMAIL_BODY_SUCCESS" | mail $MAIL_OPTIONS
+        echo "$SENDMAIL_SUBJECT \n\n$SENDMAIL_BODY_SUCCESS" | /usr/sbin/sendmail $MAIL_OPTIONS
     else
-        echo "$SENDMAIL_BODY_ERROR" | mail $MAIL_OPTIONS
+        echo "$SENDMAIL_SUBJECT \n\n$SENDMAIL_BODY_ERROR" | /usr/sbin/sendmail $MAIL_OPTIONS
     fi
 }
 
@@ -74,7 +76,7 @@ function backup_database {
 
 function backup_ssh {
     log "Backing up ssh"
-    rsync $RSYNC_OPTIONS $SSH_USERNAME@$SSH_HOST:$SSH_BACKUP_PATH $DATABASE_BACKUP_PATH
+    rsync $RSYNC_OPTIONS $DATABASE_BACKUP_PATH $SSH_USERNAME@$SSH_HOST:$SSH_BACKUP_PATH
     if [ $? -eq 0 ]; then
         log "SSH backup successful"
     else
@@ -99,6 +101,24 @@ function backup_all {
 }
 
 # Main
+# Check if the script is executed as root
+if [ "$(id -u)" != "0" ]; then
+    log "This script must be run as root"
+    send_mail 1
+    exit 1
+fi
+
+# Check if the directories exist
+if [ ! -d $DATABASE_BACKUP_PATH ]; then
+    log "Creating directory $DATABASE_BACKUP_PATH"
+    mkdir -p $DATABASE_BACKUP_PATH
+fi
+if [ ! -d $DATABASE_BACKUP_PATH ]; then
+    log "Directory $DATABASE_BACKUP_PATH does not exist"
+    send_mail 1
+    exit 1
+fi
+
 log "Starting backup"
 backup_all
 if [ $? -eq 0 ]; then
