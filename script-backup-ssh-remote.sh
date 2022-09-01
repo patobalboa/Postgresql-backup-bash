@@ -54,9 +54,9 @@ LOG_FILE="/path/to/log/file"
 
 function send_mail {
     if [ $1 -eq 0 ]; then
-        echo "$SENDMAIL_SUBJECT \n\n$SENDMAIL_BODY_SUCCESS" | /usr/sbin/sendmail $MAIL_OPTIONS
+        echo "$SENDMAIL_SUBJECT \n\n $SENDMAIL_BODY_SUCCESS" | /usr/sbin/sendmail $MAIL_OPTIONS
     else
-        echo "$SENDMAIL_SUBJECT \n\n$SENDMAIL_BODY_ERROR" | /usr/sbin/sendmail $MAIL_OPTIONS
+        echo "$SENDMAIL_SUBJECT \n\n $SENDMAIL_BODY_ERROR" | /usr/sbin/sendmail $MAIL_OPTIONS
     fi
 }
 
@@ -71,6 +71,7 @@ function backup_database {
         log "Database backup successful"
     else
         log "Database backup failed"
+        exit 1
     fi
 }
 
