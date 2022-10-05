@@ -38,9 +38,6 @@ SSH_HOST="SSH_HOST"
 SSH_PORT="SSH_PORT"
 SSH_BACKUP_PATH="/backup/path"
 
-# - CRONTAB
-CRONTAB_COMMAND="0 0 * * * /path/to/script-backup-ssh-remote.sh"
-
 # - RSYNC
 RSYNC_OPTIONS="-avz --delete"
 
@@ -85,20 +82,10 @@ function backup_ssh {
     fi
 }
 
-function backup_crontab {
-    log "Backing up crontab"
-    crontab -l > $DATABASE_BACKUP_PATH/$DATABASE_BACKUP_NAME.crontab
-    if [ $? -eq 0 ]; then
-        log "Crontab backup successful"
-    else
-        log "Crontab backup failed"
-    fi
-}
 
 function backup_all {
     backup_database
     backup_ssh
-    backup_crontab
 }
 
 # Main
