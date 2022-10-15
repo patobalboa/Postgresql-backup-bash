@@ -50,12 +50,15 @@ LOG_FILE="/path/to/log/file"
 # Functions
 
 send_mail () {
-    if [ $1 -eq 0 ]; then
-        echo "$SENDMAIL_SUBJECT \n\n $SENDMAIL_BODY_SUCCESS" | /usr/sbin/sendmail $MAIL_OPTIONS
+    if [ $1 == 0 ]; then
+        echo "$SENDMAIL_BODY_ERROR" | sendmail $MAIL_OPTIONS -s "$SENDMAIL_SUBJECT"
+        log "Error while backing up $DATABASE_NAME"
     else
-        echo "$SENDMAIL_SUBJECT \n\n $SENDMAIL_BODY_ERROR" | /usr/sbin/sendmail $MAIL_OPTIONS
+        echo "$SENDMAIL_BODY_SUCCESS" | sendmail $MAIL_OPTIONS -s "$SENDMAIL_SUBJECT"
+        log "Backup of $DATABASE_NAME completed successfully"
     fi
 }
+
 
 log () {
     echo "$(date +%Y-%m-%d_%H-%M-%S) $1" >> $LOG_FILE
