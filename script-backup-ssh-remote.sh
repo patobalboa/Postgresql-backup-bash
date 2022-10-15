@@ -16,11 +16,11 @@
 #
 # Set the following variables to your needs:
 # - SENDMAIL
-SENDMAIL_FROM = "backups@domain.com"
-SENDMAIL_TO = "mail@domain.com"
-SENDMAIL_SUBJECT = "Backup from remote server"
-SENDMAIL_BODY_ERROR = "Error while executing backup script"
-SENDMAIL_BODY_SUCCESS = "Backup from remote server successful"
+SENDMAIL_FROM="backups@domain.com"
+SENDMAIL_TO="mail@domain.com"
+SENDMAIL_SUBJECT="Backup from remote server"
+SENDMAIL_BODY_ERROR="Error while executing backup script"
+SENDMAIL_BODY_SUCCESS="Backup from remote server successful"
 
 
 # - POSTGRESQL
@@ -49,7 +49,7 @@ LOG_FILE="/path/to/log/file"
 
 # Functions
 
-function send_mail {
+send_mail () {
     if [ $1 -eq 0 ]; then
         echo "$SENDMAIL_SUBJECT \n\n $SENDMAIL_BODY_SUCCESS" | /usr/sbin/sendmail $MAIL_OPTIONS
     else
@@ -57,11 +57,11 @@ function send_mail {
     fi
 }
 
-function log {
-    echo "$(date +"%Y-%m-%d %H:%M:%S") $1" >> $LOG_FILE
+log () {
+    echo "$(date +%Y-%m-%d_%H-%M-%S) $1" >> $LOG_FILE
 }
 
-function backup_database {
+backup_database () {
     log "Backing up database $DATABASE_NAME"
     pg_dump -U $DATABASE_USERNAME -h $DATABASE_HOST -p $DATABASE_PORT $DATABASE_NAME > $DATABASE_BACKUP_PATH/$DATABASE_BACKUP_NAME.sql
     if [ $? -eq 0 ]; then
@@ -72,9 +72,9 @@ function backup_database {
     fi
 }
 
-function backup_ssh {
+backup_ssh () {
     log "Backing up ssh"
-    rsync $RSYNC_OPTIONS $DATABASE_BACKUP_PATH $SSH_USERNAME@$SSH_HOST:$SSH_BACKUP_PATH
+    rsync $RSYNC_OPTIONS $DATABASE_BACKUP_PATH/$DATABASE_BACKUP_NAME.sql $SSH_USERNAME@$SSH_HOST:$SSH_BACKUP_PATH
     if [ $? -eq 0 ]; then
         log "SSH backup successful"
     else
@@ -83,7 +83,7 @@ function backup_ssh {
 }
 
 
-function backup_all {
+backup_all () {
     backup_database
     backup_ssh
 }
