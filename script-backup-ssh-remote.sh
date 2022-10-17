@@ -29,7 +29,7 @@ DATABASE_NAME="DATABASE_NAME"
 DATABASE_USERNAME="DATABASE_USERNAME"
 DATABASE_HOST="DATABASE_HOST"
 DATABASE_PORT="DATABASE_PORT"
-DATABASE_BACKUP_PATH="/backup/path/$(date +%b-%Y)"
+DATABASE_BACKUP_PATH="/backup/path/$(date +%b-%Y)/"
 DATABASE_BACKUP_NAME="DATABASE_BACKUP_NAME-$(date +%Y-%m-%d_%H-%M-%S)"
 
 # - SSH
@@ -50,15 +50,12 @@ LOG_FILE="/path/to/log/file"
 # Functions
 
 send_mail () {
-    if [ $1 == 0 ]; then
-        echo "$SENDMAIL_BODY_ERROR" | sendmail $MAIL_OPTIONS -s "$SENDMAIL_SUBJECT"
-        log "Error while backing up $DATABASE_NAME"
+    if [ $1 -eq 0 ]; then
+        echo "$SENDMAIL_SUBJECT \n\n $SENDMAIL_BODY_SUCCESS" | /usr/sbin/sendmail $MAIL_OPTIONS
     else
-        echo "$SENDMAIL_BODY_SUCCESS" | sendmail $MAIL_OPTIONS -s "$SENDMAIL_SUBJECT"
-        log "Backup of $DATABASE_NAME completed successfully"
+        echo "$SENDMAIL_SUBJECT \n\n $SENDMAIL_BODY_ERROR" | /usr/sbin/sendmail $MAIL_OPTIONS
     fi
 }
-
 
 log () {
     echo "$(date +%Y-%m-%d_%H-%M-%S) $1" >> $LOG_FILE
