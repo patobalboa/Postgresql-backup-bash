@@ -39,7 +39,7 @@ SSH_PORT="SSH_PORT"
 SSH_BACKUP_PATH="/backup/path/$(date +%b-%Y)"
 
 # - RSYNC
-RSYNC_OPTIONS="-avz --delete"
+RSYNC_OPTIONS="-avz --remove-source-files -e ssh"
 
 # - MAIL
 MAIL_OPTIONS="-vf $SENDMAIL_FROM $SENDMAIL_TO"
